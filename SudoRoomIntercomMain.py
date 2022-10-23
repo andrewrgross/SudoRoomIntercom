@@ -10,10 +10,8 @@ A constantly running program that turns on a kiosk-style looping slideshow in th
 ### - 0 - Libraries
 import pygame
 import time
-#import cv2
 import RPi.GPIO as GPIO
-#import glob
-#import numpy as np
+from time import sleep
 #import io,sys,os,subprocess
 #global process
 
@@ -35,8 +33,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 slideshowURL = 'https://docs.google.com/presentation/d/e/2PACX-1vRsIRyslE2K0WIiMawiZuHpU2KHexuSipMXPQTy4ABqsh5MjzRhRz2C5WwdRni3bB_1Ial2Dm0mObrL/pub?start=true&loop=true&delayms=2000'
 sudoroomURL = 'http://meet.waag.org/turtlesturtlesturtles'
 
-chromedriver_location = "/home/andrew/Programs/chromedriver"
-driver = webdriver.Chrome(chromedriver_location)
+#chromedriver_location = "/home/andrew/Programs/chromedriver"
+driver = webdriver.Chrome()
 
 ##################################
 ## - 2.1 - Assets
@@ -66,12 +64,14 @@ GPIO.setup(button3,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 ### - 3 - Startup commands
 
 ### Open browser to slideshow
-#driver.get(slideshowURL)
-webbrowser.open(slideshowURL)
-webbrowser.open(sudoroomURL)
 
 driver.get(slideshowURL)
+sleep(8)
+
 driver.get(sudoroomURL)
+sleep(15)
+
+print('Done')
 
 ##############################################################################
 ### - 4 - Main loop
