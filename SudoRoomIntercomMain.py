@@ -42,16 +42,16 @@ driver = webdriver.Chrome()
 menucontrol = pygame.image.load('./Assets/menu-control.png')
 
 ## Sounds
-beep1 = pygame.mixer.Sound('./Assets/beep1.wav')
+#beep1 = pygame.mixer.Sound('./Assets/beep1.wav')
 
 
 ##################################
 ## - 2.1 - Pins
 
 ## Pins
-button1 = 2
-button2 = 3
-button3 = 25
+button1 = 26
+button2 = 19
+button3 = 13
 
 ## Pin Modes
 GPIO.setmode(GPIO.BCM)
@@ -66,12 +66,38 @@ GPIO.setup(button3,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 ### Open browser to slideshow
 
 driver.get(slideshowURL)
+# Remove notification
+# Make full screen
 sleep(8)
 
 driver.get(sudoroomURL)
+# Agree to provide mic and camera support
 sleep(15)
+driver.get(slideshowURL)
 
-print('Done')
+print('Beginning loop')
 
 ##############################################################################
 ### - 4 - Main loop
+
+while True:
+    if GPIO.input(button1) == False:
+        # Display loading message
+        driver.get(sudoroomURL)
+        # Clear loading message
+        # Agree to provide mic and camera support
+
+        sleep(15)
+        driver.get(slideshowURL)
+
+    if GPIO.input(button2) == False:
+        break
+    
+# Close browser window
+print('Done')
+    
+    
+
+
+
+
