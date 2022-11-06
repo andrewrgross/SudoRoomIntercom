@@ -29,7 +29,7 @@ chrome_options = Options()
 chrome_options.add_experimental_option("useAutomationExtension", False)
 chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_argument("--start-fullscreen");
-chrome_opt.add_argument("use-fake-ui-for-media-stream")
+chrome_options.add_argument("use-fake-ui-for-media-stream")
 #chrome_options.add_argument("--kiosk");
 
 ##############################################################################
