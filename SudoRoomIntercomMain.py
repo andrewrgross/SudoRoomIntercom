@@ -29,6 +29,7 @@ chrome_options = Options()
 chrome_options.add_experimental_option("useAutomationExtension", False)
 chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 chrome_options.add_argument("--start-fullscreen");
+chrome_opt.add_argument("use-fake-ui-for-media-stream")
 #chrome_options.add_argument("--kiosk");
 
 ##############################################################################
@@ -112,19 +113,19 @@ pygame.display.update()
 
 while True:
     if state == 0:      # Slideshow mode
-            if GPIO.input(button1) == False:
-                # Display loading message
-                driver.get(sudoroomURL)
-                # Clear loading message
-                # Agree to provide mic and camera support
-                
-                sleep(15)
-                #timerVal = 15
-                driver.get(slideshowURL)
-                
-            if GPIO.input(button2) == False:
-                break
-                #Make this go to
+        if GPIO.input(button1) == False:
+            # Display loading message
+            driver.get(sudoroomURL)
+            # Clear loading message
+            # Agree to provide mic and camera support
+            
+            sleep(20)
+            #timerVal = 15
+            driver.get(slideshowURL)
+            
+        if GPIO.input(button2) == False:
+            break
+            #Make this go to
 
     if state == 1:
         pass
