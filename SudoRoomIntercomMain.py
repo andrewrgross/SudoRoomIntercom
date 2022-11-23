@@ -82,6 +82,23 @@ state = 0   # 0: slideshow; 1: Menu;  2: Sudo Room intercom
 
 ### Open browser to slideshow
 
+driver.get(sudoroomURL)
+sleep(5)
+driver.send_keys('a')
+sleep(1)
+driver.send_keys('\t')
+sleep(0.5)
+driver.send_keys('\t')
+sleep(0.5)
+driver.send_keys('Keys.LEFT')
+sleep(0.5)
+driver.send_keys('Keys.LEFT')
+sleep(0.5)
+driver.send_keys('Keys.ENTER')
+sleep(0.5)
+#driver.send_keys('Keys.ESC')
+sleep(3)
+
 driver.get(slideshowURL)
 sleep(3)
 
@@ -121,7 +138,7 @@ while True:
             #Make this go to
             
         if GPIO.input(button3) == False:
-            print('Button 2 pressed in state 0: activate pygame')
+            print('Button 3 pressed in state 0: activate pygame')
             state = 2
             timeStamp = datetime.now()
             pygame.init()
@@ -150,7 +167,6 @@ while True:
             state = 0
             print('Switching to state 0 after timeout')
             pygame.quit()
-            driver.get(slideshowURL)
             sleep(1)
             
         if GPIO.input(button1) == False:
