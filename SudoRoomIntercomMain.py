@@ -9,6 +9,7 @@ A constantly running program that turns on a kiosk-style looping slideshow in th
 ##############################################################################
 ### - 0 - Libraries
 import pygame
+from datetime import datetime
 import time
 import RPi.GPIO as GPIO
 from time import sleep
@@ -47,10 +48,10 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 ##################################
 ## - 2.1 - Assets
 ## Images
-menucontrol = pygame.image.load('./Assets/menu-control.png')
+menucontrol = pygame.image.load('~/Desktop/SudoRoomIntercom/Assets/menu-control.png')
 
 ## Sounds
-#beep1 = pygame.mixer.Sound('./Assets/beep1.wav')
+#beep1 = pygame.mixer.Sound('~/Desktop/SudoRoomIntercom/Assets/beep1.wav')
 
 
 ##################################
@@ -60,6 +61,7 @@ menucontrol = pygame.image.load('./Assets/menu-control.png')
 button1 = 26
 button2 = 19
 button3 = 13
+button4 = 6
 
 ## Pin Modes
 GPIO.setmode(GPIO.BCM)
@@ -90,7 +92,7 @@ driver.get(slideshowURL)
 
 print('Beginning loop')
 
-"""
+
 
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -105,8 +107,14 @@ font2 = pygame.font.SysFont(None, 50)
 screen.blit(menucontrol, (0,0))
 pygame.display.update()
 
+sleep(5)
 
-"""
+pygame.quit()
+
+sleep(4)
+
+driver.get(slideshowURL)
+sleep(5)
 
 ##############################################################################
 ### - 4 - Main loop
@@ -114,21 +122,57 @@ pygame.display.update()
 while True:
     if state == 0:      # Slideshow mode
         if GPIO.input(button1) == False:
+            state = 1
             # Display loading message
             driver.get(sudoroomURL)
             # Clear loading message
-            # Agree to provide mic and camera support
-            
-            sleep(20)
+            timeStamp = datetime.now()
+            #sleep(20)
             #timerVal = 15
             driver.get(slideshowURL)
             
         if GPIO.input(button2) == False:
             break
             #Make this go to
+            
+        if GPIO.input(button3) == False:
+            state = 2
+            pygame.init()
+            screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+            screen.fill((255, 255, 255))
+            # Draw a solid blue circle in the center
+            pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
+            font = pygame.font.SysFont(None, 66)
+            font2 = pygame.font.SysFont(None, 50)
+            screen.blit(menucontrol, (0,0))
+            pygame.display.update()
+            
+    if state == 1:      # Video chat
+        if (datetime.now() - timeStamp).total_seconds()) > 60:
+            state = 0
+            driver.get(slideshowURL)
+        if GPIO.input(button1) == False:
+            state = 0
+            driver.get(slideshowURL)            
+            
+    if state == 2:      # Menu
+        if (datetime.now() - timeStamp).total_seconds()) > 10:
+            state = 0
+            print('Switching to state 0 after timeout')
+            driver.get(slideshowURL)
+        if GPIO.input(button1) == False:
+            # Scroll or update
+        if GPIO.input(button2) == False:
+            # Scroll or update
+        if GPIO.input(button3) == False:
+            # Scroll or update
+        if GPIO.input(button4) == False:
+            # Scroll or update
 
-    if state == 1:
-        pass
+
+
+
+        
     
 # Close browser window
 print('Done')
