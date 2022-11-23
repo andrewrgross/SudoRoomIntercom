@@ -148,7 +148,7 @@ while True:
             pygame.display.update()
             
     if state == 1:      # Video chat
-        if (datetime.now() - timeStamp).total_seconds()) > 60:
+        if (datetime.now() - timeStamp).total_seconds() > 60:
             state = 0
             driver.get(slideshowURL)
         if GPIO.input(button1) == False:
@@ -156,18 +156,22 @@ while True:
             driver.get(slideshowURL)            
             
     if state == 2:      # Menu
-        if (datetime.now() - timeStamp).total_seconds()) > 10:
+        if (datetime.now() - timeStamp).total_seconds() > 10:
             state = 0
             print('Switching to state 0 after timeout')
             driver.get(slideshowURL)
         if GPIO.input(button1) == False:
             # Scroll or update
+            pass
         if GPIO.input(button2) == False:
             # Scroll or update
+            pass
         if GPIO.input(button3) == False:
             # Scroll or update
+            pass
         if GPIO.input(button4) == False:
             # Scroll or update
+            pass
 
 
 
