@@ -48,7 +48,7 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 ##################################
 ## - 2.1 - Assets
 ## Images
-menucontrol = pygame.image.load('/home/Pi/Desktop/SudoRoomIntercom/Assets/menu-control.png')
+menucontrol = pygame.image.load('/home/pi/Desktop/SudoRoomIntercom/Assets/menu-control.png')
 
 ## Sounds
 #beep1 = pygame.mixer.Sound('~/Desktop/SudoRoomIntercom/Assets/beep1.wav')
@@ -69,6 +69,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(button1,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(button2,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(button3,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(button4,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 ##################################
 ## - 2.1 - States
@@ -81,18 +83,9 @@ state = 0   # 0: slideshow; 1: Menu;  2: Sudo Room intercom
 ### Open browser to slideshow
 
 driver.get(slideshowURL)
-# Remove notification
-# Make full screen
-sleep(8)
-
-driver.get(sudoroomURL)
-# Agree to provide mic and camera support
-sleep(15)
-driver.get(slideshowURL)
+sleep(3)
 
 print('Beginning loop')
-
-
 
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -103,18 +96,10 @@ pygame.draw.circle(screen, (0, 0, 100), (250, 250), 75)
 font = pygame.font.SysFont(None, 66)
 font2 = pygame.font.SysFont(None, 50)
 
-
 screen.blit(menucontrol, (0,0))
 pygame.display.update()
-
-sleep(5)
-
+sleep(1)
 pygame.quit()
-
-sleep(4)
-
-driver.get(slideshowURL)
-sleep(5)
 
 ##############################################################################
 ### - 4 - Main loop
@@ -124,12 +109,10 @@ while True:
         if GPIO.input(button1) == False:
             print('Button 1 pressed in state 0: activate intercom')
             state = 1
+            timeStamp = datetime.now()
             # Display loading message
             driver.get(sudoroomURL)
             # Clear loading message
-            timeStamp = datetime.now()
-            #sleep(20)
-            driver.get(slideshowURL)
             sleep(1)
             
         if GPIO.input(button2) == False:
@@ -140,13 +123,12 @@ while True:
         if GPIO.input(button3) == False:
             print('Button 2 pressed in state 0: activate pygame')
             state = 2
+            timeStamp = datetime.now()
             pygame.init()
             screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
             screen.fill((255, 255, 255))
             # Draw a solid blue circle in the center
             pygame.draw.circle(screen, (0, 0, 200), (250, 250), 75)
-            font = pygame.font.SysFont(None, 66)
-            font2 = pygame.font.SysFont(None, 50)
             screen.blit(menucontrol, (0,0))
             pygame.display.update()
             
@@ -163,19 +145,25 @@ while True:
             sleep(1)
             
     if state == 2:      # Menu
-        if (datetime.now() - timeStamp).total_seconds() > 10:
-            print(datetime.now() + ' in state 2')
+        if (datetime.now() - timeStamp).total_seconds() > 8:
+            print('State 2 timeout')
             state = 0
             print('Switching to state 0 after timeout')
+            pygame.quit()
             driver.get(slideshowURL)
             sleep(1)
             
         if GPIO.input(button1) == False:
             # Scroll or update
-            pass
+            state = 0
+            print('Button 1 pressed in state 2: Switching to state 0')
+            pygame.quit()
+            driver.get(slideshowURL)
+            sleep(1)
+            
         if GPIO.input(button2) == False:
-            # Scroll or update
-            pass
+            print('Button 2 pressed in state 2')
+            break
         if GPIO.input(button3) == False:
             # Scroll or update
             pass
