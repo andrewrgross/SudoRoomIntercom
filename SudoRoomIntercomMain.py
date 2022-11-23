@@ -48,7 +48,7 @@ driver = webdriver.Chrome(chrome_options=chrome_options)
 ##################################
 ## - 2.1 - Assets
 ## Images
-menucontrol = pygame.image.load('~/Desktop/SudoRoomIntercom/Assets/menu-control.png')
+menucontrol = pygame.image.load('/home/Pi/Desktop/SudoRoomIntercom/Assets/menu-control.png')
 
 ## Sounds
 #beep1 = pygame.mixer.Sound('~/Desktop/SudoRoomIntercom/Assets/beep1.wav')
@@ -98,7 +98,7 @@ pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 screen.fill((255, 255, 255))
 # Draw a solid blue circle in the center
-pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
+pygame.draw.circle(screen, (0, 0, 100), (250, 250), 75)
 
 font = pygame.font.SysFont(None, 66)
 font2 = pygame.font.SysFont(None, 50)
@@ -122,26 +122,29 @@ sleep(5)
 while True:
     if state == 0:      # Slideshow mode
         if GPIO.input(button1) == False:
+            print('Button 1 pressed in state 0: activate intercom')
             state = 1
             # Display loading message
             driver.get(sudoroomURL)
             # Clear loading message
             timeStamp = datetime.now()
             #sleep(20)
-            #timerVal = 15
             driver.get(slideshowURL)
+            sleep(1)
             
         if GPIO.input(button2) == False:
+            print('Button 2 pressed in state 0')
             break
             #Make this go to
             
         if GPIO.input(button3) == False:
+            print('Button 2 pressed in state 0: activate pygame')
             state = 2
             pygame.init()
             screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
             screen.fill((255, 255, 255))
             # Draw a solid blue circle in the center
-            pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
+            pygame.draw.circle(screen, (0, 0, 200), (250, 250), 75)
             font = pygame.font.SysFont(None, 66)
             font2 = pygame.font.SysFont(None, 50)
             screen.blit(menucontrol, (0,0))
@@ -149,17 +152,24 @@ while True:
             
     if state == 1:      # Video chat
         if (datetime.now() - timeStamp).total_seconds() > 60:
+            print(datetime.now())
             state = 0
             driver.get(slideshowURL)
-        if GPIO.input(button1) == False:
+            
+        if GPIO.input(button3) == False:
+            print('Button 3 pressed in state 1: end call')
             state = 0
-            driver.get(slideshowURL)            
+            driver.get(slideshowURL)    
+            sleep(1)
             
     if state == 2:      # Menu
         if (datetime.now() - timeStamp).total_seconds() > 10:
+            print(datetime.now() + ' in state 2')
             state = 0
             print('Switching to state 0 after timeout')
             driver.get(slideshowURL)
+            sleep(1)
+            
         if GPIO.input(button1) == False:
             # Scroll or update
             pass
@@ -171,8 +181,9 @@ while True:
             pass
         if GPIO.input(button4) == False:
             # Scroll or update
-            pass
+            print('button4 pressed')
 
+sleep(1)
 
 
 
