@@ -71,6 +71,9 @@ GPIO.setup(button2,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(button3,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(button4,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+## Define pygame fonts
+font = pygame.font.SysFont(None, 66)
+font2 = pygame.font.SysFont(None, 50)
 
 ##################################
 ## - 2.1 - States
@@ -80,40 +83,27 @@ state = 0   # 0: slideshow; 1: Menu;  2: Sudo Room intercom
 ##############################################################################
 ### - 3 - Startup commands
 
-### Open browser to slideshow
+### Open browser to video chat
 
 driver.get(sudoroomURL)
-sleep(5)
-driver.send_keys('a')
-sleep(1)
-driver.send_keys('\t')
-sleep(0.5)
-driver.send_keys('\t')
-sleep(0.5)
-driver.send_keys('Keys.LEFT')
-sleep(0.5)
-driver.send_keys('Keys.LEFT')
-sleep(0.5)
-driver.send_keys('Keys.ENTER')
-sleep(0.5)
-#driver.send_keys('Keys.ESC')
-sleep(3)
+sleep(4)
+### Set the quality
+driver.find_element_by_tag_name('body').send_keys('a')
+driver.find_element_by_tag_name('body').send_keys('\t')
+driver.find_element_by_tag_name('body').send_keys('\t')
+ActionChains(driver).key_down(Keys.LEFT).key_up(Keys.LEFT).key_down(Keys.LEFT).key_up(Keys.LEFT).perform()
 
 driver.get(slideshowURL)
 sleep(3)
 
-print('Beginning loop')
+print('Testing pygame')
 
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 screen.fill((255, 255, 255))
 # Draw a solid blue circle in the center
 pygame.draw.circle(screen, (0, 0, 100), (250, 250), 75)
-
-font = pygame.font.SysFont(None, 66)
-font2 = pygame.font.SysFont(None, 50)
-
-screen.blit(menucontrol, (0,0))
+#screen.blit(menucontrol, (0,0))
 pygame.display.update()
 sleep(1)
 pygame.quit()
