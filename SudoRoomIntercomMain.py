@@ -60,8 +60,8 @@ menucontrol = pygame.image.load('/home/pi/Desktop/SudoRoomIntercom/Assets/menu-c
 ## Pins
 button1 = 6
 button2 = 13
-button3 = 19
-button4 = 26
+button3 = 26
+button4 = 19
 
 ## Pin Modes
 GPIO.setmode(GPIO.BCM)
@@ -90,9 +90,9 @@ selectionList = ['Sudo Room', 'Test 1', 'Test 2', 'Test 3']
 driver.get(sudoroomURL)
 sleep(4)
 ### Set the quality
-driver.find_element_by_tag_name('body').send_keys('a')
-driver.find_element_by_tag_name('body').send_keys('\t')
-driver.find_element_by_tag_name('body').send_keys('\t')
+driver.find_element('xpath', '//body').send_keys('a')
+driver.find_element('xpath', '//body').send_keys('\t')
+driver.find_element('xpath', '//body').send_keys('\t')
 ActionChains(driver).key_down(Keys.LEFT).key_up(Keys.LEFT).key_down(Keys.LEFT).key_up(Keys.LEFT).perform()
 
 driver.get(slideshowURL)
@@ -100,6 +100,7 @@ sleep(3)
 
 print('Testing pygame')
 
+### Font not found
 color_list = ((255,0,255), (255,0,127), (255,0,0), (255,127,0))
 text1 = font.render('Sudo Room', True, color_list[0])
 text2 = font2.render('Test', True, color_list[1])
@@ -107,10 +108,10 @@ text3 = font2.render('Test 2', True, color_list[2])
 text4 = font2.render('TEST 3', True, color_list[3])
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
 
-screen.blit(text1, (30, 50))
-screen.blit(text2, (60, 160))
-screen.blit(text3, (60, 260))
-screen.blit(text4, (60, 360))
+screen.blit(text1, (50, 50))
+screen.blit(text2, (50, 160))
+screen.blit(text3, (50, 260))
+screen.blit(text4, (50, 360))
 
 pygame.init()
 screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
@@ -127,8 +128,13 @@ pygame.quit()
 
 while True:
     if state == 0:      # Slideshow mode
+            
         if GPIO.input(button1) == False:
+            print('Button 1 pressed: Changing state from 0 to 0.5')
+            state = 0.5
+            timeStamp = datetime.now()
             ActionChains(driver).key_down(Keys.LEFT).key_up(Keys.LEFT).perform()
+            ## Need to reset the slideshow after breaking the cycle
             
         if GPIO.input(button2) == False:
             print('Button 2 pressed in state 0: activate pygame menu')
@@ -136,27 +142,78 @@ while True:
             timeStamp = datetime.now()
             pygame.init()
             screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
-            screen.fill((255, 255, 255))
+            screen.fill((10, 25, 25))
             # Draw a solid blue circle in the center
-            screen.blit(text1, (30, 50))
-            screen.blit(text2, (60, 160))
-            screen.blit(text3, (60, 260))
-            screen.blit(text4, (60, 360))            
+            screen.blit(text1, (50, 50))
+            screen.blit(text2, (50, 160))
+            screen.blit(text3, (50, 260))
+            screen.blit(text4, (50, 360))          
             #screen.blit(menucontrol, (0,0))
             pygame.display.update()
             
         if GPIO.input(button3) == False:
+            print('Button 3 pressed: Changing state from 0 to 0.5')
+            state = 0.5
+            timeStamp = datetime.now()
             ActionChains(driver).key_down(Keys.RIGHT).key_up(Keys.RIGHT).perform()
-
+            ## Need to reset the slideshow after breaking the cycle
+            
         if GPIO.input(button4) == False:
-            print('Button 1 pressed in state 0: activate intercom')
-            state = 1
+            print('Button 4 pressed in state 0: activate intercom')
+            state = 2
             timeStamp = datetime.now()
             # Display loading message
             driver.get(sudoroomURL)
             # Clear loading message
             sleep(1)
             
+    if state == 0.5:      # Slideshow mode
+        if (datetime.now() - timeStamp).total_seconds() > 10:
+            print('State 0.5 timeout')
+            state = 0
+            print('Switching from state 0.5 to state 0')
+            driver.get(slideshowURL)
+            sleep(0.5)
+
+        if GPIO.input(button1) == False:
+            print('Button 1 pressed: State remains 0.5')
+            state = 0.5
+            timeStamp = datetime.now()
+            ActionChains(driver).key_down(Keys.LEFT).key_up(Keys.LEFT).perform()
+            ## Need to reset the slideshow after breaking the cycle
+            
+        if GPIO.input(button2) == False:
+            print('Button 2 pressed in state 0.5: activate pygame menu')
+            state = 1
+            timeStamp = datetime.now()
+            pygame.init()
+            screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+            screen.fill((10, 25, 25))
+            # Draw a solid blue circle in the center
+            screen.blit(text1, (50, 50))
+            screen.blit(text2, (50, 160))
+            screen.blit(text3, (50, 260))
+            screen.blit(text4, (50, 360))          
+            #screen.blit(menucontrol, (0,0))
+            pygame.display.update()
+            
+        if GPIO.input(button3) == False:
+            print('Button 3 pressed: state remains 0.5')
+            state = 0.5
+            timeStamp = datetime.now()
+            ActionChains(driver).key_down(Keys.RIGHT).key_up(Keys.RIGHT).perform()
+            ## Need to reset the slideshow after breaking the cycle
+            
+        if GPIO.input(button4) == False:
+            print('Button 4 pressed in state 0: activate intercom')
+            state = 2
+            timeStamp = datetime.now()
+            # Display loading message
+            driver.get(sudoroomURL)
+            # Clear loading message
+            sleep(1)
+
+
             
     if state == 1:      # Menu
         if (datetime.now() - timeStamp).total_seconds() > 10:
@@ -164,7 +221,8 @@ while True:
             state = 0
             print('Switching to state 0 after timeout')
             pygame.quit()
-            sleep(1)
+            driver.get(slideshowURL)
+            sleep(0.5)
             
         if GPIO.input(button1) == False:
             # Scroll or update
@@ -177,23 +235,23 @@ while True:
         if GPIO.input(button2) == False:
             print('Button 2 pressed in state 1')
             selectionPos = selectionPos - 1
-                if selectionPos == -1:
+            if selectionPos == -1:
                     selectionPos = len(selectionList)
             sleep(0.5)
             
         if GPIO.input(button3) == False:
             print('Button 3 pressed in state 1: Activate Intercom')
-            state = 1
+            state = 2
             timeStamp = datetime.now()
             # Display loading message
             driver.get(sudoroomURL)
             # Clear loading message
-            sleep(1)
+            sleep(0.5)
             
         if GPIO.input(button4) == False:
             print('Button 2 pressed in state 1')
             selectionPos = selectionPos - 1
-                if selectionPos == -1:
+            if selectionPos == -1:
                     selectionPos = len(selectionList)
             sleep(0.5)
             
@@ -205,17 +263,25 @@ while True:
             driver.get(slideshowURL)
             
         if GPIO.input(button1) == False:
-            print('Button 1 pressed in state 1: end call')
+            print('Button 1 pressed in state 2: end call')
             state = 0
             driver.get(slideshowURL)    
             sleep(1)
+
+        if GPIO.input(button2) == False:
+            print('Button 2 pressed in state 2: no action')
+            pass
+            sleep(1)
             
         if GPIO.input(button3) == False:
-            print('Button 3 pressed in state 1: extend call')
+            print('Button 3 pressed in state 2: extend call')
             timeStamp = datetime.now()   
             sleep(0.5)
             
-
+        if GPIO.input(button4) == False:
+            print('Button 4 pressed in state 2: no action')
+            pass
+            sleep(1)
 
 
 sleep(1)
