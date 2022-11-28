@@ -72,8 +72,8 @@ GPIO.setup(button3,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(button4,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 ## Define pygame fonts
-font = pygame.font.SysFont(None, 66)
-font2 = pygame.font.SysFont(None, 50)
+font = pygame.font.SysFont('Roboto', 66)
+font2 = pygame.font.SysFont('Arial', 50)
 
 ##################################
 ## - 2.1 - States
